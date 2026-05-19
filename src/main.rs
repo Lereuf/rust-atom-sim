@@ -47,20 +47,21 @@ fn draw() {
     // Dessin de l'orbite et des électrons en mouvement
     let nb_electrons = unsafe { NB_ELECTRONS };
     if nb_electrons > 0 {
-        let radius = unsafe { NUCLEONS_SIZE } * 8.0;
+        let radius = 250.0; // Distance fixe par rapport au centre du noyau
         // Dessin de l'orbite (cercle vert fluo)
         draw_circle_lines(center_x, center_y, radius, 1.0, LIME);
         
         // Dessin des électrons en rotation
         let t = get_time() as f32;
         let speed = 1.5; // vitesse de rotation (radians par seconde)
+        let re = (r / 3.0).max(5.0); // Les électrons sont petits mais toujours visibles
         for i in 0..nb_electrons {
             let theta = (i as f32 * std::f32::consts::PI * 2.0 / nb_electrons as f32) + t * speed;
             let offset_x = radius * theta.cos();
             let offset_y = radius * theta.sin();
             
-            draw_circle(center_x + offset_x, center_y + offset_y, r / 3.0, GREEN); // électrons plus petits
-            draw_circle_lines(center_x + offset_x, center_y + offset_y, r / 3.0, 1.0, BLACK);
+            draw_circle(center_x + offset_x, center_y + offset_y, re, GREEN);
+            draw_circle_lines(center_x + offset_x, center_y + offset_y, re, 1.0, BLACK);
         }
     }
 }
