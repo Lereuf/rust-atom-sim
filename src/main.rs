@@ -20,6 +20,7 @@ fn get_atom() -> Atome {
 
 static MAP: std::sync::Mutex<Vec<(f32, f32, i32)>> = std::sync::Mutex::new(Vec::new());
 static mut NUCLEONS_SIZE: f32 = 100.0;
+static mut NB_ELECTRONS: i32 = 0;
 
 fn draw() {
     clear_background(SKYBLUE);
@@ -27,6 +28,8 @@ fn draw() {
     let r = unsafe { NUCLEONS_SIZE } / 2.0;
     let center_x = screen_width() / 2.0;
     let center_y = screen_height() / 2.0;
+
+    // Dessin du noyau (protons et neutrons)
     for nucleon in map.iter().rev() {
         match nucleon.2 {
             0 => {
@@ -38,6 +41,26 @@ fn draw() {
                 draw_circle_lines(center_x + nucleon.0, center_y + nucleon.1, r, 2.0, BLACK);
             }
             _ => {}
+        }
+    }
+
+    // Dessin de l'orbite et des électrons en mouvement
+    let nb_electrons = unsafe { NB_ELECTRONS };
+    if nb_electrons > 0 {
+        let radius = unsafe { NUCLEONS_SIZE } * 8.0;
+        // Dessin de l'orbite (cercle vert fluo)
+        draw_circle_lines(center_x, center_y, radius, 1.0, LIME);
+        
+        // Dessin des électrons en rotation
+        let t = get_time() as f32;
+        let speed = 1.5; // vitesse de rotation (radians par seconde)
+        for i in 0..nb_electrons {
+            let theta = (i as f32 * std::f32::consts::PI * 2.0 / nb_electrons as f32) + t * speed;
+            let offset_x = radius * theta.cos();
+            let offset_y = radius * theta.sin();
+            
+            draw_circle(center_x + offset_x, center_y + offset_y, r / 3.0, GREEN); // électrons plus petits
+            draw_circle_lines(center_x + offset_x, center_y + offset_y, r / 3.0, 1.0, BLACK);
         }
     }
 }
@@ -83,6 +106,7 @@ async fn main() {
     let atome: Atome = get_atom();
     unsafe {
         NUCLEONS_SIZE = 100.0 / (atome.nb_neutrons as f32 + atome.nb_protons as f32).sqrt();
+        NB_ELECTRONS = atome.nb_electrons;
     }
     let prot_rest: i32 = atome.nb_protons;
     let neutr_rest: i32 = atome.nb_neutrons;
