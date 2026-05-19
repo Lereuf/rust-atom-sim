@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Se déclenche sur les tags comme v1.0.0, v2.1.0, etc.
+
+jobs:
+  build-ubuntu:
+    name: Build on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libx11-dev libxi-dev libgl1-mesa-dev libasound2-dev
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-atom-sim-ubuntu
+          path: target/release/rust-atom-sim
+
+  build-arch:
+    name: Build on Arch Linux
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      # L'image archlinux par défaut a besoin de git, tar et base-devel pour que actions/checkout fonctionne
+      - name: Install system dependencies and Rust
+        run: |
+          pacman -Syu --noconfirm base-devel pkgconf alsa-lib libx11 libxi mesa git rustup
+          rustup toolchain install stable
+          rustup default stable
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-atom-sim-arch
+          path: target/release/rust-atom-sim
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release binary
+        run: cargo build --release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-atom-sim-windows
+          path: target/release/rust-atom-sim.exe
