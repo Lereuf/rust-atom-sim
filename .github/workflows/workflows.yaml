@@ -73,3 +73,36 @@ jobs:
         with:
           name: rust-atom-sim-windows
           path: target/release/rust-atom-sim.exe
+
+  create-release:
+    name: Create GitHub Release (Draft)
+    needs: [build-ubuntu, build-arch, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Organize assets
+        run: |
+          mkdir assets
+          cp artifacts/rust-atom-sim-ubuntu/rust-atom-sim assets/rust-atom-sim-ubuntu
+          cp artifacts/rust-atom-sim-arch/rust-atom-sim assets/rust-atom-sim-arch
+          cp artifacts/rust-atom-sim-windows/rust-atom-sim.exe assets/rust-atom-sim-windows.exe
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            assets/rust-atom-sim-ubuntu
+            assets/rust-atom-sim-arch
+            assets/rust-atom-sim-windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
