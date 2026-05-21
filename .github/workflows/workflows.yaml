@@ -2,8 +2,13 @@ name: Build and Release
 
 on:
   push:
+    branches:
+      - master
     tags:
       - 'v*' # Se déclenche sur les tags comme v1.0.0, v2.1.0, etc.
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build-ubuntu:
@@ -20,6 +25,9 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Rust cache
+        uses: swatinem/rust-cache@v2
 
       - name: Build release binary
         run: cargo build --release
@@ -39,6 +47,7 @@ jobs:
       # L'image archlinux par défaut a besoin de git, tar et base-devel pour que actions/checkout fonctionne
       - name: Install system dependencies and Rust
         run: |
+          pacman -Sy --noconfirm archlinux-keyring
           pacman -Syu --noconfirm base-devel pkgconf alsa-lib libx11 libxi mesa git rustup
           rustup toolchain install stable
           rustup default stable
@@ -65,6 +74,9 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Setup Rust cache
+        uses: swatinem/rust-cache@v2
+
       - name: Build release binary
         run: cargo build --release
 
@@ -78,6 +90,7 @@ jobs:
     name: Create GitHub Release (Draft)
     needs: [build-ubuntu, build-arch, build-windows]
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     steps:
