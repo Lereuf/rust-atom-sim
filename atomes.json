@@ -1,6 +1,62 @@
-{
-    "nom_atome": "Hélium",
+[
+  {
+    "nom_atome": "Hydrogène",
     "nb_neutrons": 0,
+    "nb_protons": 1,
+    "nb_electrons": 1
+  },
+  {
+    "nom_atome": "Hélium",
+    "nb_neutrons": 2,
     "nb_protons": 2,
     "nb_electrons": 2
-}
+  },
+  {
+    "nom_atome": "Lithium",
+    "nb_neutrons": 4,
+    "nb_protons": 3,
+    "nb_electrons": 3
+  },
+  {
+    "nom_atome": "Béryllium",
+    "nb_neutrons": 5,
+    "nb_protons": 4,
+    "nb_electrons": 4
+  },
+  {
+    "nom_atome": "Bore",
+    "nb_neutrons": 6,
+    "nb_protons": 5,
+    "nb_electrons": 5
+  },
+  {
+    "nom_atome": "Carbone",
+    "nb_neutrons": 6,
+    "nb_protons": 6,
+    "nb_electrons": 6
+  },
+  {
+    "nom_atome": "Azote",
+    "nb_neutrons": 7,
+    "nb_protons": 7,
+    "nb_electrons": 7
+  },
+  {
+    "nom_atome": "Oxygène",
+    "nb_neutrons": 8,
+    "nb_protons": 8,
+    "nb_electrons": 8
+  },
+  {
+    "nom_atome": "Néon",
+    "nb_neutrons": 10,
+    "nb_protons": 10,
+    "nb_electrons": 10
+  },
+  {
+    "nom_atome": "Sodium",
+    "nb_neutrons": 12,
+    "nb_protons": 11,
+    "nb_electrons": 11
+  }
+]
